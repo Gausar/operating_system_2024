@@ -2,61 +2,58 @@
 #include<pthread.h>
 #include<stdlib.h>
 
-struct matrix{
-    int row;
-    int col;
-    int (*a)[3];
-    int (*b)[3];
-    int (*res)[3];
-};
+#define COL 3
+#define ROW 3
+#define THREAD_NUM 9
+int step = 0;
+
+int a[ROW][COL] = {{1, 2, 1}, {3, 2, 1}, {2, 3, 1}};;
+int b[ROW][COL] = {{1, 1, 1}, {2, 1, 1}, {1, 2, 3}};
+int c[ROW][COL]; /*
+                |1 2 1|     |1 1 1|     |6 5 6|
+                |3 2 1|  *  |2 1 1| =   |8 7 8|
+                |2 3 1|     |1 2 3|     |9 7 8|
+                */
 
 void *mult_matrix(void *t){
-    struct matrix *data = (struct matrix *)t;
-    int sum = 0;
-    for(int k = 0; k < 3; k++){
-        sum += data->a[data->row][k] * data->b[k][data->col];
+    int i = step++;
+    for(int j = 0; j < ROW; j++){
+        for(int k = 0; k < COL; k++){
+            c[i][j] += a[i][k] * b[k][j];
+        }
     }
-    data->res[data->row][data->col] = sum;
-    pthread_exit(NULL);
 }
 
 int main(){
-    int a[3][3] = {{1, 2, 1},
-                   {3, 2, 1},
-                   {2, 3, 1}};
-    int b[3][3] = {{1, 1, 1},
-                   {2, 1, 1},
-                   {1, 2, 3}};
-    int c[3][3];
-    /*
-    |1 2 1|     |1 1 1|     |6 5 6|
-    |3 2 1|  *  |2 1 1| =   |8 7 8|
-    |2 3 1|     |1 2 3|     |9 7 8|
-    */
-
-    pthread_t threads[9];
-    struct matrix mat_arr[9];
-    int thread_idx = 0;
-
-    for(int i = 0; i < 3; i++){
-        for(int j = 0; j < 3; j++){
-            mat_arr[thread_idx].row = i;
-            mat_arr[thread_idx].col = j;
-            mat_arr[thread_idx].a = a;
-            mat_arr[thread_idx].b = b;
-            mat_arr[thread_idx].res = c;
-
-            pthread_create(&threads[thread_idx], NULL, mult_matrix, (void *)&mat_arr[thread_idx]);
-            thread_idx++;
+    printf("matrix a: \n");
+    for(int i = 0; i < ROW; i++){
+        for(int j = 0; j < COL; j++){
+            printf("%d ", a[i][j]);
         }
+        printf("\n");
+    }
+    printf("matrix b: \n");
+    for(int i = 0; i < ROW; i++){
+        for(int j = 0; j < COL; j++){
+            printf("%d ", b[i][j]);
+        }
+        printf("\n");
     }
 
-    for(int i = 0; i < 9; i++){
+    pthread_t threads[THREAD_NUM];
+
+    for(int i = 0; i < THREAD_NUM; i++){
+        int *p;
+        pthread_create(&threads[i], NULL, mult_matrix, (void *)(p));
+    }
+
+    for(int i = 0; i < THREAD_NUM; i++){
         pthread_join(threads[i], NULL);
     }
     
-    for(int i = 0; i < 3; i++){
-        for(int j = 0; j < 3; j++){
+    printf("matrix c:\n");
+    for(int i = 0; i < ROW; i++){
+        for(int j = 0; j < COL; j++){
             printf("%d ", c[i][j]);
         }
         printf("\n");
