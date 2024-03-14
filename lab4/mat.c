@@ -52,13 +52,7 @@ int main(){
     for(int i = 0; i < THREAD_NUM; i++){
         pthread_join(threads[i], NULL);
     }
-    printf("matrix c:\n");
-    for(int i = 0; i < ROW; i++){
-        for(int j = 0; j < COL; j++){
-            printf("%d ", c[i][j]);
-        }
-        printf("\n");
-    }
+    
     printf("c[%d][%d] = %d\n",d, e, c[d][e]);
     return 0;
 }
