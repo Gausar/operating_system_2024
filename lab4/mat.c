@@ -43,7 +43,6 @@ int main(){
     scanf("%d %d", &d, &e);
 
     pthread_t threads[THREAD_NUM];
-
     for(int i = 0; i < THREAD_NUM; i++){
         int *p;
         pthread_create(&threads[i], NULL, mult_matrix, (void *)(p));
@@ -52,7 +51,6 @@ int main(){
     for(int i = 0; i < THREAD_NUM; i++){
         pthread_join(threads[i], NULL);
     }
-    
     printf("c[%d][%d] = %d\n",d, e, c[d][e]);
     return 0;
 }
