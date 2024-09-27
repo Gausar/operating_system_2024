@@ -50,7 +50,6 @@ int main(){
     for(int i = 0; i < THREAD_NUM; i++){
         pthread_join(threads[i], NULL);
     }
-    //printf("c[2][2] : %d\n", c[2][2]);
     printf("matrix c:\n");
     for(int i = 0; i < ROW; i++){
         for(int j = 0; j < COL; j++){
